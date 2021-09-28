@@ -1,2 +1,4 @@
 ---
 
+opendistro_apt_key: https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch
+opendistro_apt_url: "deb https://d3g5vo6xdbdb9a.cloudfront.net/apt stable main"

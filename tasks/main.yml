@@ -1,2 +1,35 @@
 ---
 
+- name: Install pre-requisite (Debian)
+  package:
+    name: [ca-certificates, apt-transport-https, curl, gpg, unzip]
+    state: present
+
+- name: Add Opendistro repository key (Debian)
+  apt_key:
+    url: '{{ opendistro_apt_key }}'
+    state: present
+    keyring: /etc/apt/trusted.gpg.d/debian.gpg
+
+- name: Add Opendistro repository (Debian)
+  apt_repository:
+    repo: '{{ opendistro_apt_url }}'
+    state: present
+    filename: Opendistro
+    mode: "0644"
+
+- name: Ensure Opendistro is installed (Debian)
+  apt:
+    name: '{{ opendistro_package_name }}'
+    state: present
+    allow_unauthenticated: "{{ 'no' if opendistro_apt_key else 'yes' }}"
+    cache_valid_time: 86400
+  notify: Restart opendistro
+  environment:
+    ES_PATH_CONF: "{{ opendistro_conf_dir }}"
+
+- name: Hold opendistro version (Debian)
+  dpkg_selections:
+    name: "{{ opendistro_package_name }}"
+    selection: "hold"
+  when: opendistro_version_lock
